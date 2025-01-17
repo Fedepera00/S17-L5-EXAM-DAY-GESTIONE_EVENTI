@@ -1,6 +1,7 @@
-package it.epicode.gestione_eventi.auth;
+package it.epicode.gestione_eventi.repositories;
 
 
+import it.epicode.gestione_eventi.entities.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

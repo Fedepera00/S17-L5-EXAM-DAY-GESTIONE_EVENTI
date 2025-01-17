@@ -1,6 +1,5 @@
 package it.epicode.gestione_eventi.entities;
 
-import it.epicode.gestione_eventi.auth.AppUser;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

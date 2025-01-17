@@ -1,5 +1,9 @@
-package it.epicode.gestione_eventi.auth;
+package it.epicode.gestione_eventi.services;
 
+import it.epicode.gestione_eventi.entities.AppUser;
+import it.epicode.gestione_eventi.auth.JwtTokenUtil;
+import it.epicode.gestione_eventi.enums.Role;
+import it.epicode.gestione_eventi.repositories.AppUserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +66,7 @@ public class AppUserService {
 
     public AppUser loadUserByUsername(String username)  {
         AppUser appUser = appUserRepository.findByUsername(username)
-            .orElseThrow(() -> new EntityNotFoundException("Utente non trovato con username: " + username));
+                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato con username: " + username));
 
 
         return appUser;

@@ -1,6 +1,7 @@
 package it.epicode.gestione_eventi.auth;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import it.epicode.gestione_eventi.services.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,33 +26,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
         final String requestTokenHeader = request.getHeader("Authorization");
 
         String username = null;
         String jwtToken = null;
 
-        // Estrae il token JWT dal header Authorization
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Impossibile ottenere il token JWT");
-            } catch (ExpiredJwtException e) {
-                System.out.println("Il token JWT è scaduto");
+            } catch (IllegalArgumentException | ExpiredJwtException e) {
+                System.out.println("Token JWT non valido o scaduto.");
             }
-        } else {
-            // logger.warn("Il token JWT non inizia con Bearer");
-            chain.doFilter(request, response);
-            return;
         }
 
-        // Valida il token e configura l'autenticazione nel contesto di sicurezza
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

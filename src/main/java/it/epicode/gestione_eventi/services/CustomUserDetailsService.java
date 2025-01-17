@@ -1,5 +1,7 @@
-package it.epicode.gestione_eventi.auth;
+package it.epicode.gestione_eventi.services;
 
+import it.epicode.gestione_eventi.entities.AppUser;
+import it.epicode.gestione_eventi.repositories.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

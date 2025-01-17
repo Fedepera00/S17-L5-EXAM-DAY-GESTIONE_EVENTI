@@ -1,5 +1,7 @@
-package it.epicode.gestione_eventi.auth;
+package it.epicode.gestione_eventi.config;
 
+import it.epicode.gestione_eventi.auth.JwtAuthenticationEntryPoint;
+import it.epicode.gestione_eventi.auth.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,41 +16,36 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-
 public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-
         http
-                .csrf(csrf -> csrf.disable()) // Disabilita CSRF
+                .csrf(csrf -> csrf.disable()) // Disabilita CSRF per API REST
                 .authorizeHttpRequests(authorize -> authorize
-                        //.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Accesso libero a Swagger
-                        //.requestMatchers("/api/**").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/**").permitAll() // Accesso pubblico
+                        .requestMatchers("/api/events/**").hasAnyRole("ADMIN", "ORGANIZER") // ADMIN e ORGANIZER
+                        .requestMatchers("/api/bookings/**").hasAnyRole("ADMIN", "USER") // ADMIN e USER
+                        .requestMatchers("/api/users/**").hasRole("ADMIN") // Solo ADMIN
+                        .anyRequest().authenticated() // Protegge tutti gli altri endpoint
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
-        // Aggiungi il filtro JWT
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

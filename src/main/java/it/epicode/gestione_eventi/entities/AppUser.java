@@ -1,5 +1,6 @@
-package it.epicode.gestione_eventi.auth;
+package it.epicode.gestione_eventi.entities;
 
+import it.epicode.gestione_eventi.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package it.epicode.gestione_eventi.auth;
+package it.epicode.gestione_eventi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
